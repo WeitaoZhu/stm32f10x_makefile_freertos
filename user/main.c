@@ -16,26 +16,26 @@ void Delay(__IO uint32_t nCount)
 void RCC_Configuration(void)
 {
     /* GPIOA, GPIOB clock enable */
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
 }
 
 void GPIO_Configuration(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_11;
+    GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_13;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
 }
 
 void vTaskFunction(void * pvParameters)
 {
-    debug("start task");
+    debug("start task\r\n");
     while (1) {
-        GPIO_ResetBits(GPIOB, GPIO_Pin_11);
+        GPIO_ResetBits(GPIOC, GPIO_Pin_13);
         vTaskDelay(1000);
-        GPIO_SetBits(GPIOB, GPIO_Pin_11);
+        GPIO_SetBits(GPIOC, GPIO_Pin_13);
         vTaskDelay(1000);
     }
 }
@@ -48,11 +48,11 @@ int main()
     RCC_Configuration();
     GPIO_Configuration();
 
-    debug("start main");
+    debug("start main\r\n");
     const char* pcTextForTask1 = "Task1 is running\r\n";
 
 
-    xTaskCreate(vTaskFunction, "Task 1", 16, (void*)pcTextForTask1, 1, NULL);
+    xTaskCreate(vTaskFunction, "Task 1", 1024, (void*)pcTextForTask1, 1, NULL);
 
     vTaskStartScheduler();
 
